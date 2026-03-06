@@ -76,7 +76,7 @@ export default function Home() {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="text-center mb-12"
+          className="text-center mt-8"
         >
           <h1 className="text-6xl w-full  mb-4 font-sans font-semibold tracking-tight">
             Check your website performance with{" "}
@@ -93,7 +93,7 @@ export default function Home() {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.2 }}
-          className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-3xl shadow-2xl p-8 border border-slate-200 dark:border-slate-800"
+          className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-3xl shadow-2xl p-8 border border-slate-200 dark:border-slate-800 scale-80"
         >
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
@@ -192,7 +192,7 @@ export default function Home() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8 }}
-          className="text-center mt-8 text-slate-500 dark:text-slate-400 text-sm"
+          className="text-center -mt-4 text-slate-500 dark:text-slate-400 text-sm"
         >
           Powered by Google PageSpeed Insights & Gemini AI
         </motion.p>
