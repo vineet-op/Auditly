@@ -1,36 +1,169 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Auditly
+
+AI-powered website audit tool that provides comprehensive analysis of performance, SEO, accessibility, security, and best practices.
+
+## Features
+
+- **Performance Analysis** - Core Web Vitals, Lighthouse scores, optimization opportunities
+- **SEO Audit** - Meta tags, Open Graph, structured data, heading structure
+- **Accessibility Check** - WCAG compliance and accessibility scores
+- **Security Headers** - HTTPS, HSTS, CSP, and other security headers
+- **Best Practices** - Industry standards and recommendations
+- **AI-Powered Insights** - Gemini AI analyzes data and provides actionable recommendations
+- **Quick Wins** - Top 3 high-impact improvements identified by AI
+- **Interactive Charts** - Visual representation of scores and metrics
+- **Beautiful UI** - Modern design with animations and gradients
+
+## Tech Stack
+
+- **Framework**: Next.js 16 (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS v4
+- **Animations**: Motion (Framer Motion)
+- **Charts**: Recharts
+- **Icons**: Lucide React
+- **Data Parsing**: Cheerio
+- **Validation**: Zod
+- **AI**: Google Gemini 2.5 Flash
+- **APIs**: Google PageSpeed Insights
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18+ installed
+- pnpm installed (`npm install -g pnpm`)
+- Google Gemini API key
+- Google PageSpeed Insights API key
+
+### Installation
+
+1. Clone the repository
+2. Install dependencies:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+3. Create `.env.local` file in the root directory:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```env
+GEMINI_API_KEY=your_gemini_api_key_here
+GOOGLE_PSI_API_KEY=your_google_psi_api_key_here
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Running the App
 
-## Learn More
+```bash
+pnpm dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Project Structure
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+website-analyzer/
+├── app/
+│   ├── page.tsx                    # Homepage with URL input
+│   ├── layout.tsx                  # Root layout
+│   ├── api/
+│   │   └── audit/
+│   │       └── route.ts            # POST endpoint for audits
+│   └── report/
+│       └── [id]/
+│           └── page.tsx            # Report display page
+├── lib/
+│   ├── types.ts                    # TypeScript types & Zod schemas
+│   ├── scraper.ts                  # Data collection functions
+│   ├── gemini.ts                   # AI analysis logic
+│   └── utils.ts                    # Utility functions
+└── .env.local                      # Environment variables
+```
 
-## Deploy on Vercel
+## How It Works
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. **User Input**: Enter a website URL on the homepage
+2. **Validation**: URL is validated (blocks localhost and IP addresses)
+3. **Parallel Data Collection**:
+   - Google PageSpeed Insights API → Lighthouse scores, Core Web Vitals, opportunities
+   - Cheerio (HTTP fetch) → HTML parsing, meta tags, Open Graph, structured data
+   - HEAD request → Security headers check
+4. **AI Analysis**: All data is sent to Gemini AI for comprehensive analysis
+5. **Report Generation**: AI returns structured JSON with:
+   - Overall score and summary
+   - Category scores with grades (A-F)
+   - Specific issues and recommendations
+   - Top 3 quick wins
+6. **Display**: Beautiful, interactive report with charts and animations
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## API Endpoints
+
+### POST `/api/audit`
+
+Audit a website and return comprehensive report.
+
+**Request Body:**
+```json
+{
+  "url": "https://example.com"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "reportId": "base64url_encoded_url",
+  "report": {
+    "id": "report_id",
+    "url": "https://example.com",
+    "createdAt": "2026-03-06T...",
+    "overallScore": 85,
+    "summary": "...",
+    "quickWins": ["...", "...", "..."],
+    "categories": {
+      "performance": { "score": 90, "grade": "A", "issues": [], "recommendations": [] },
+      "seo": { "score": 85, "grade": "B", "issues": [], "recommendations": [] },
+      "accessibility": { "score": 88, "grade": "B", "issues": [], "recommendations": [] },
+      "security": { "score": 75, "grade": "C", "issues": [], "recommendations": [] },
+      "bestPractices": { "score": 92, "grade": "A", "issues": [], "recommendations": [] }
+    },
+    "rawMetrics": { ... }
+  }
+}
+```
+
+## Error Handling
+
+The app implements resilient error handling:
+- Each data source (PageSpeed, HTML, Security) has individual try/catch blocks
+- Partial audits succeed even if one data source fails
+- Error flags are included in raw metrics
+- 8-second timeout on HTML fetching to prevent hanging
+
+## Validation Rules
+
+- URLs must be valid HTTP/HTTPS format
+- Localhost URLs are blocked
+- IP addresses are blocked
+- Only public websites can be audited
+
+## Development
+
+### Build for Production
+
+```bash
+pnpm build
+pnpm start
+```
+
+### Linting
+
+```bash
+pnpm lint
+```
+
+## License
+
+MIT
